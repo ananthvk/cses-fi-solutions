@@ -18,38 +18,36 @@ std::ostream &operator<<(std::ostream &os, const grid &g)
     return os;
 }
 
-void DFS(const grid &g, int m, int n, int node, std::vector<bool> &visited)
+void DFS(const grid &g, int m, int n, int start_row, int start_col, std::vector<std::vector<bool>> &visited)
 {
-    std::stack<int> stk;
-    stk.push(node);
+    std::stack<std::pair<int, int>> stk;
+    stk.push(std::make_pair(start_row, start_col));
     while (!stk.empty())
     {
-        int t = stk.top();
+        auto t = stk.top();
         stk.pop();
         // Process the node
-        visited[t] = true;
+        visited[t.first][t.second] = true;
 
         // Push all adjacent floors
-        int row = t / n;
-        int col = t % n;
+        int row = t.first;
+        int col = t.second;
         for (int i = -1; i <= 1; i += 2)
         {
             int nr = row + i;
             int nc = col + i;
             if (nr >= 0 && nr < m && g[nr][col] == '.')
             {
-                int idx = nr * n + col;
-                if (!visited[idx])
+                if (!visited[nr][col])
                 {
-                    stk.push(idx);
+                    stk.push(std::make_pair(nr, col));
                 }
             }
             if (nc >= 0 && nc < n && g[row][nc] == '.')
             {
-                int idx = row * n + nc;
-                if (!visited[idx])
+                if (!visited[row][nc])
                 {
-                    stk.push(idx);
+                    stk.push(std::make_pair(row, nc));
                 }
             }
         }
@@ -66,15 +64,17 @@ int number_of_rooms(const grid &g, int m, int n)
     //         Perform DFS(square) and mark all adjacent floors as visited
     int rooms = 0;
     // 0 means unvisited, 1 means visited
-    std::vector<bool> visited(m * n, 0);
-    for (int i = 0; i < (m * n); i++)
+    std::vector<std::vector<bool>> visited(m, std::vector<bool>(n, false));
+
+    for (int row = 0; row < m; row++)
     {
-        int row = i / n;
-        int col = i % n;
-        if (g[row][col] == '.' && !visited[i])
+        for (int col = 0; col < n; col++)
         {
-            rooms++;
-            DFS(g, m, n, i, visited);
+            if (g[row][col] == '.' && !visited[row][col])
+            {
+                rooms++;
+                DFS(g, m, n, row, col, visited);
+            }
         }
     }
 
