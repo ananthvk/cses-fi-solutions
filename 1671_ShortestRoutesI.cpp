@@ -1,6 +1,8 @@
 #include <iostream>
+#include <queue>
 #include <vector>
 using namespace std;
+const int SRC = 1;
 
 class WeightedDirectedGraph
 {
@@ -52,4 +54,20 @@ int main()
         g.add(t1, t2, w);
     }
 
+    // Use Dijkstra's algorithm to solve this problem
+    // Note: A decrease-key priority queue is required, but a normal priority queue also works
+    // at the cost of a little performance, since useless edges are present in the queue.
+
+    // Pair of distance, vertex,
+    priority_queue<pair<int, int>, std::vector<std::pair<int, int>>,
+                   std::greater<std::pair<int, int>>>
+        pq;
+
+    // Add the source vertex to priority queue, with distance 0
+    pq.push(make_pair(SRC, 0));
+
+    while (!pq.empty())
+    {
+        pq.pop();
+    }
 }
